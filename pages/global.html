@@ -37,6 +37,34 @@
 <a href="odd.html" class="fab">+</a>
 
 <script>
+    // В цикле вывода объявлений на global.html
+allAds.forEach(ad => {
+    let actionBtn = "";
+    
+    // Проверяем тип контакта
+    if (ad.contactType === 'number') {
+        actionBtn = `<a href="tel:${ad.contact}" class="btn-action" onclick="event.stopPropagation()">Позвонить</a>`;
+    } else {
+        // Если ссылка, проверяем, есть ли там http, если нет - добавляем
+        let url = ad.contact.includes('http') ? ad.contact : `https://${ad.contact}`;
+        actionBtn = `<a href="${url}" target="_blank" class="btn-action" onclick="event.stopPropagation()">Связаться</a>`;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'ad-card';
+    // Добавляем переход на страницу просмотра при клике на КАРТОЧКУ
+    card.onclick = () => window.location.href = `view.html?id=${ad.id}`;
+
+    card.innerHTML = `
+        <h3>${ad.title}</h3>
+        <p>${ad.desc}</p>
+        <b style="color: #66fcf1">${ad.price}</b>
+        <div class="card-footer">
+            ${actionBtn}
+        </div>
+    `;
+    container.appendChild(card);
+});
     // Этот код нужно вставить в начало каждой страницы
 window.onload = function() {
     const userIsLoggedIn = localStorage.getItem('isLoggedIn');
@@ -65,4 +93,5 @@ if (name) {
     displayAllAds();
 </script>
 </body>
+
 </html>
