@@ -152,6 +152,160 @@
         e.preventDefault();
         
         let contactInfo = "";
+        <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить объявление</title>
+    <style>
+        body {
+            background-color: #2d5a5a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .form-card {
+            background: #1f3d3d;
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #45a29e;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h2 { color: #66fcf1; margin-top: 0; text-align: center; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #a8dadc; }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+            box-sizing: border-box;
+            background: #e0e0e0;
+            font-size: 15px;
+        }
+
+        .contact-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px dashed #45a29e;
+        }
+
+        .hidden { display: none; }
+
+        .btn-submit {
+            background-color: #45a29e;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-submit:hover { background-color: #66fcf1; color: #1f2833; }
+        .back-link { color: #66fcf1; text-decoration: none; display: block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <a href="global.html" class="back-link">← Назад на главную</a>
+    <h2>Анкета объявления</h2>
+    
+    <form id="adForm">
+        <label>Заголовок (Портфолио / Услуга)</label>
+        <input type="text" id="title" placeholder="Заголовок" required>
+
+        <label>Описание</label>
+        <textarea id="desc" rows="4" placeholder="Описание" required></textarea>
+
+        <div class="contact-section">
+            <label>Как с вами связаться?</label>
+            <select id="contactType" onchange="toggleContactFields()">
+                <option value="" disabled selected>Выберите способ свизвться с вами</option>
+                <option value="number">Номер телефона</option>
+                <option value="link">Ссылка на соцсеть</option>
+            </select>
+
+            <div id="numberFields" class="hidden">
+                <label>Выберите страну</label>
+                <select id="country">
+                    <option value="+7">Россия / Казахстан (+7)</option>
+                    <option value="+380">Украина (+380)</option>
+                    <option value="+375">Беларусь (+375)</option>
+                    <option value="+993">Туркменистан (+993)</option>
+                    <option value="+998">Узбекистан (+998)</option>
+                    <option value="+996">Кыргызстан (+996)</option>
+                </select>
+                <label>Введите номер</label>
+                <input type="tel" id="userPhone" placeholder="99 123456">
+            </div>
+
+            <div id="linkFields" class="hidden">
+                <label>Выберите приложение</label>
+                <select id="socialApp">
+                    <option value="Telegram">Telegram</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Imo">Imo</option>
+                </select>
+                <label>Ссылка или ID пользователя</label>
+                <input type="text" id="socialLink" placeholder="t.me/username или ID">
+            </div>
+        </div>
+
+        <label>Цена / Бюджет</label>
+        <input type="text" id="price" placeholder="Цена">
+
+        <label>Фотографии</label>
+        <input type="file" id="photos" accept="image/*" multiple>
+
+        <label>Видео (не более одного!)</label>
+        <input type="file" id="video" accept="video/*" onchange="checkVideo(this)">
+
+        <button type="submit" class="btn-submit">Опубликовать</button>
+    </form>
+</div>
+
+<script>
+    // Функция переключения полей
+    function toggleContactFields() {
+        const type = document.getElementById('contactType').value;
+        const numDiv = document.getElementById('numberFields');
+        const linkDiv = document.getElementById('linkFields');
+
+        if (type === 'number') {
+            numDiv.classList.remove('hidden');
+            linkDiv.classList.add('hidden');
+        } else if (type === 'link') {
+            linkDiv.classList.remove('hidden');
+            numDiv.classList.add('hidden');
+        }
+    }
+
+    // Проверка видео
+    function checkVideo(input) {
+        if (input.files.length > 1) {
+            alert("Максимум 1 видео!");
+            input.value = "";
+        }
+    }
+
+    // Сохранение (пример для твоего профиля)
+    document.getElementById('adForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        let contactInfo = "";
         const type = document.getElementById('contactType').value;
         
         if (type === 'number') {
@@ -179,4 +333,32 @@
 </script>
 
 </body>
+</html>
+        
+        if (type === 'number') {
+            contactInfo = document.getElementById('country').value + " " + document.getElementById('userPhone').value;
+        } else {
+            contactInfo = document.getElementById('socialApp').value + ": " + document.getElementById('socialLink').value;
+        }
+
+        const newAd = {
+            title: document.getElementById('title').value,
+            desc: document.getElementById('desc').value,
+            price: document.getElementById('price').value,
+            contact: contactInfo,
+            user: 'Admin',
+            id: Date.now()
+        };
+
+        let ads = JSON.parse(localStorage.getItem('allAds')) || [];
+        ads.push(newAd);
+        localStorage.setItem('allAds', JSON.stringify(ads));
+
+        alert("Объявление успешно создано!");
+        window.location.href = "profile.html";
+    };
+</script>
+
+</body>
+
 </html>
