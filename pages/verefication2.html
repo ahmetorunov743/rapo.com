@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Войти</title>
+    <style>
+        /* Установка фона для всей страницы */
+.fon {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2d5a57; /* Темно-зеленый фон как на главной */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Карточка регистрации/входа */
+.registration-card {
+    background-color: #3e8e86; /* Чуть более светлый оттенок для блока */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    color: white;
+}
+
+h2 {
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Группы ввода */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
+
+/* Кнопка "Войти" */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #2d5a57;
+    color: #4ed9c1; /* Цвет текста как у ссылок на главной */
+    border: 2px solid #4ed9c1;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #4ed9c1;
+    color: #2d5a57;
+}
+    </style>
+</head>
+<body class="fon">
+    <div class="registration-card">
+        <h2>Вход</h2>
+        <form>
+          <div class="input-group">
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" placeholder="e-mail" required>
+          </div>
+      
+          <div class="input-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" placeholder="Введите пороль" required>
+          </div>
+      
+          <a href="global.html" type="submit" class="btn-submit">Войти</a>
+        </form>
+     
+      </div>
+</body>
+</html>

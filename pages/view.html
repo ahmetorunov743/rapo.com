@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Просмотр объявления</title>
+    <style>
+        body { background-color: #2d5a5a; color: white; font-family: sans-serif; padding: 20px; }
+        .view-container { max-width: 800px; margin: 0 auto; background: #1f3d3d; padding: 30px; border-radius: 15px; border: 1px solid #45a29e; }
+        .media-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .media-gallery img { width: 200px; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #45a29e; }
+        video { width: 100%; max-width: 600px; border-radius: 10px; margin-top: 20px; }
+        .btn-call { display: inline-block; background: #45a29e; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="view-container" id="fullAd">
+    </div>
+
+<script>
+    // 1. Получаем ID из URL (например, view.html?id=12345)
+    const urlParams = new URLSearchParams(window.location.search);
+    const adId = urlParams.get('id');
+
+    // 2. Ищем данные в памяти
+    const allAds = JSON.parse(localStorage.getItem('allAds')) || [];
+    const ad = allAds.find(item => item.id == adId);
+
+    if (ad) {
+        const container = document.getElementById('fullAd');
+        
+        // Логика кнопки
+        const link = ad.contactType === 'number' ? `tel:${ad.contact}` : ad.contact;
+        const btnText = ad.contactType === 'number' ? 'Позвонить по номеру' : 'Написать в соцсети';
+
+        container.innerHTML = `
+            <a href="global.html" style="color: #66fcf1; text-decoration: none;">← Назад ко всем объявлениям</a>
+            <h1 style="color: #66fcf1; margin-top: 20px;">${ad.title}</h1>
+            <p style="font-size: 18px;">${ad.desc}</p>
+            <h2 style="color: #66fcf1">${ad.price}</h2>
+            
+            <div class="media-gallery" id="photoGallery"></div>
+            <div id="videoContainer"></div>
+            
+            <a href="${link}" class="btn-call">${btnText}</a>
+        `;
+
+        // Вывод фото (если они сохранены как массив ссылок/base64)
+        if (ad.photos && ad.photos.length > 0) {
+            const gallery = document.getElementById('photoGallery');
+            ad.photos.forEach(src => {
+                gallery.innerHTML += `<img src="${src}" alt="Фото">`;
+            });
+        }
+
+        // Вывод видео
+        if (ad.video) {
+            document.getElementById('videoContainer').innerHTML = `
+                <h3>Видео портфолио:</h3>
+                <video controls src="${ad.video}"></video>
+            `;
+        }
+    } else {
+        document.body.innerHTML = "<h1>Объявление не найдено</h1><a href='global.html'>Вернуться назад</a>";
+    }
+</script>
+</body>
+</html>

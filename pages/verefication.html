@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зарегистрироваться</title>
+    <style>
+    
+
+.btn-submit:hover {
+    background-color: #66fcf1;
+    color: #1f2833;
+}
+        /* Общие настройки для центрирования и фона всей страницы */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2d5a57; /* Темно-зеленый фон как на главной */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Карточка регистрации */
+.registration-card {
+    background-color: #3e8e86; /* Бирюзовый фон карточки */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    color: white;
+}
+
+h2 {
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Стилизация полей ввода и меток */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box; /* Чтобы padding не менял ширину */
+}
+
+/* Стилизация кнопки "Создать аккаунт" */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #2d5a57;
+    color: #4ed9c1; /* Цвет текста как у ссылок */
+    border: 2px solid #4ed9c1;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #4ed9c1;
+    color: #2d5a57;
+}
+
+/* Ссылка "Войти" под формой */
+.login-link {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: #4ed9c1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+    </style>
+</head>
+<body>
+    <script>
+        // Находим форму по тегу (или добавь id="regForm" в тег <form>)
+        const form = document.querySelector('form');
+    
+        form.onsubmit = function(e) {
+            // Эта функция сработает ТОЛЬКО если все поля с атрибутом required заполнены
+            e.preventDefault(); // Останавливаем стандартную отправку
+    
+            // Здесь можно сохранить данные пользователя в localStorage
+            const username = document.getElementById('username').value;
+            localStorage.setItem('currentUser', username);
+    
+            // Если всё ок, переходим на главную
+            window.location.href = "global.html";
+        };
+    </script>
+    <div class="registration-card">
+        <h2>Регистрация</h2>
+        <form>
+          <div class="input-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" placeholder="Введите имя" required>
+          </div>
+      
+          <div class="input-group">
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" placeholder="e-mail" required>
+          </div>
+      
+          <div class="input-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" placeholder="Придумайте пороль" required>
+          </div>
+      
+          <button type="submit" class="btn-submit">Создать аккаунт</button>
+        </form>
+        <p class="login-link">Уже есть аккаунт? <a href="verefication2.html">Войти</a></p>
+      </div>
+      <script>
+        const registrationForm = document.querySelector('form');
+    
+        registrationForm.onsubmit = function(event) {
+            event.preventDefault(); // Останавливаем мгновенный переход
+    
+            const name = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+    
+            // Простая проверка: если поля не пустые
+            if (name.trim() !== "" && email.trim() !== "" && pass.trim() !== "") {
+                // Сохраняем имя пользователя, чтобы сайт его "помнил"
+                localStorage.setItem('currentUser', document.getElementById('username').value);
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                alert("Регистрация успешна!");
+                window.location.href = "global.html"; // Теперь переходим
+            } else {
+                alert("Пожалуйста, заполните все поля!");
+            }
+        };
+    </script>
+</body>
+</html>

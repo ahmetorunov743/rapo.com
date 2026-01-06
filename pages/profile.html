@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Моё Портфолио</title>
+    <style>
+        body { background-color: #2d5a5a; color: white; font-family: sans-serif; padding: 20px; }
+        .header-profile { border-bottom: 2px solid #45a29e; padding-bottom: 20px; margin-bottom: 20px; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .ad-card { background: #1f3d3d; border: 1px solid #45a29e; padding: 15px; border-radius: 12px; position: relative;}
+        .delete-btn { color: #ff4d4d; cursor: pointer; border: 1px solid #ff4d4d; background: none; width: 100%; margin-top: 10px; padding: 5px; border-radius: 5px;}
+        .back { color: #66fcf1; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<a href="global.html" class="back">← На главную</a>
+
+<div class="header-profile">
+    <h1>Моё личное портфолио</h1>
+    <p id="userStatus">Пользователь: Тестовый Аккаунт</p>
+</div>
+
+<div class="portfolio-grid" id="myAds">
+    </div>
+
+<script>
+    function displayMyAds() {
+        const ads = JSON.parse(localStorage.getItem('allAds')) || [];
+        // Фильтруем только "мои" (для теста представим, что мой ник 'Admin')
+        const myAds = ads.filter(ad => ad.user === 'Admin'); 
+        
+        const container = document.getElementById('myAds');
+        if(myAds.length === 0) {
+            container.innerHTML = "<p>У вас пока нет постов в портфолио.</p>";
+            return;
+        }
+
+        container.innerHTML = myAds.map((ad, index) => `
+            <div class="ad-card">
+                <h3>${ad.title}</h3>
+                <p>${ad.desc}</p>
+                <b>${ad.price}</b>
+                <button class="delete-btn" onclick="deleteMyAd(${index})">Удалить из портфолио</button>
+            </div>
+        `).join('');
+    }
+
+    function deleteMyAd(index) {
+        let ads = JSON.parse(localStorage.getItem('allAds')) || [];
+        ads.splice(index, 1);
+        localStorage.setItem('allAds', JSON.stringify(ads));
+        displayMyAds();
+    }
+
+    displayMyAds();
+</script>
+</body>
+</html>

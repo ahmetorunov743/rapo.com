@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рекламная Платформа - Главная</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Базовые стили из твоих скриншотов */
+        body { margin: 0; font-family: sans-serif; background-color: #2d5a5a; color: white; }
+        header { background-color: #45a29e; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .ad-card { background: #1f3d3d; border: 1px solid #45a29e; padding: 15px; border-radius: 12px; }
+        .profile-btn { background: white; color: #2d5a5a; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #45a29e; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; color: white; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>RAPO_Official</h1>
+        <p>ВЫСТАВЛЯЙТЕ ОБЪЯВЛЕНИЯ ТОЛЬКО НА ЛУЧШЕМ СЕРВИСЕ</p>
+    </div>
+    <a href="profile.html" class="profile-btn">Мой Профиль (Портфолио)</a>
+</header>
+
+<div class="container">
+    <div class="search-box" style="text-align: center; margin: 20px 0;">
+        <input type="text" id="search" placeholder="Поиск по всем объявлениям..." style="padding: 10px; width: 300px; border-radius: 20px; border: none;">
+    </div>
+
+    <h2>Все объявления</h2>
+    <div class="ads-grid" id="globalAds">
+        </div>
+</div>
+
+<a href="odd.html" class="fab">+</a>
+
+<script>
+    // Этот код нужно вставить в начало каждой страницы
+window.onload = function() {
+    const userIsLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    // Если пользователь НЕ вошел и пытается зайти на внутреннюю страницу
+    if (!userIsLoggedIn && window.location.pathname.includes('global.html')) {
+        window.location.href = "verefication.html"; // Отправляем регистрироваться
+    }
+};
+const name = localStorage.getItem('currentUser');
+if (name) {
+    document.getElementById('statsBlock').innerHTML = `<h2>Привет, ${name}!</h2>`;
+}
+    function displayAllAds() {
+        const ads = JSON.parse(localStorage.getItem('allAds')) || [];
+        const container = document.getElementById('globalAds');
+        container.innerHTML = ads.map(ad => `
+            <div class="ad-card">
+                <h3>${ad.title}</h3>
+                <p>${ad.desc}</p>
+                <b style="color: #66fcf1">${ad.price}</b><br>
+                <small>Автор: ${ad.user}</small>
+            </div>
+        `).join('');
+    }
+    displayAllAds();
+</script>
+</body>
+</html>
