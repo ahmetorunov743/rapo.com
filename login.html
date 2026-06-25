@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вход — Рекламная платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a href="../index.html" class="masthead__mark">Рекламная платформа</a>
+      <nav class="nav-links">
+        <a href="register.html">Нет аккаунта?</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="form-shell">
+    <div class="form-card">
+      <div class="form-card__header">
+        <p class="eyebrow">Личный кабинет</p>
+        <h1>Вход</h1>
+      </div>
+      <div class="form-card__body">
+        <div id="form-alert"></div>
+        <form id="login-form" novalidate>
+          <div class="field" id="field-email">
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+            <p class="error-text">Введите email.</p>
+          </div>
+          <div class="field" id="field-password">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <p class="error-text">Введите пароль.</p>
+          </div>
+          <button type="submit" class="btn btn--primary" id="submit-btn" style="width:100%">Войти</button>
+        </form>
+      </div>
+      <div class="form-card__footer">
+        Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="../assets/js/data.js"></script>
+  <script>
+    var form = document.getElementById('login-form');
+    var alertBox = document.getElementById('form-alert');
+    var submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      alertBox.innerHTML = '';
+
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+
+      document.getElementById('field-email').classList.toggle('has-error', !email);
+      document.getElementById('field-password').classList.toggle('has-error', !password);
+      if (!email || !password) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Входим…';
+
+      DB.loginUser({ email: email, password: password })
+        .then(function () {
+          window.location.href = 'feed.html';
+        })
+        .catch(function (err) {
+          alertBox.innerHTML = '<div class="alert alert--error">' + err.message + '</div>';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Войти';
+        });
+    });
+  </script>
+
+</body>
+</html>

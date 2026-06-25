@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Регистрация — Рекламная платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a href="../index.html" class="masthead__mark">Рекламная платформа</a>
+      <nav class="nav-links">
+        <a href="login.html">Уже есть аккаунт?</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="form-shell">
+    <div class="form-card">
+      <div class="form-card__header">
+        <p class="eyebrow">Новый аккаунт</p>
+        <h1>Регистрация</h1>
+      </div>
+      <div class="form-card__body">
+        <div id="form-alert"></div>
+        <form id="register-form" novalidate>
+          <div class="field" id="field-username">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" autocomplete="username" required>
+            <p class="error-text">Введите имя пользователя.</p>
+          </div>
+          <div class="field" id="field-email">
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+            <p class="error-text">Введите корректный email.</p>
+          </div>
+          <div class="field" id="field-password">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" autocomplete="new-password" minlength="6" required>
+            <p class="error-text">Минимум 6 символов.</p>
+          </div>
+          <button type="submit" class="btn btn--primary" id="submit-btn" style="width:100%">Создать аккаунт</button>
+        </form>
+      </div>
+      <div class="form-card__footer">
+        Уже есть аккаунт? <a href="login.html">Войти</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="../assets/js/data.js"></script>
+  <script>
+    var form = document.getElementById('register-form');
+    var alertBox = document.getElementById('form-alert');
+    var submitBtn = document.getElementById('submit-btn');
+
+    function setError(fieldId, hasError) {
+      document.getElementById(fieldId).classList.toggle('has-error', hasError);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      alertBox.innerHTML = '';
+
+      var username = document.getElementById('username').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+
+      var valid = true;
+      setError('field-username', !username); if (!username) valid = false;
+      setError('field-email', !email.includes('@')); if (!email.includes('@')) valid = false;
+      setError('field-password', password.length < 6); if (password.length < 6) valid = false;
+      if (!valid) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Создаём аккаунт…';
+
+      DB.registerUser({ username: username, email: email, password: password })
+        .then(function () {
+          window.location.href = 'feed.html';
+        })
+        .catch(function (err) {
+          alertBox.innerHTML = '<div class="alert alert--error">' + err.message + '</div>';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Создать аккаунт';
+        });
+    });
+  </script>
+
+</body>
+</html>

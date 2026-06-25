@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рекламная платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <span class="masthead__mark">Рекламная платформа</span>
+      <span class="masthead__meta">Документ актуален на <span id="doc-date"></span></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__inner">
+        <div class="hero__content">
+          <p class="eyebrow">Площадка объявлений и услуг</p>
+          <h1>Размещайте объявления.<br>Находите исполнителей.</h1>
+          <p class="lede">Единый реестр предложений — от частных объявлений до коммерческих услуг — в одном строгом интерфейсе без лишнего шума.</p>
+          <div class="cta-row" id="cta-row">
+            <a href="pages/register.html" class="btn btn--primary">Зарегистрироваться</a>
+            <a href="pages/login.html" class="btn btn--secondary">Войти</a>
+          </div>
+        </div>
+
+        <aside class="ledger" aria-label="Статистика платформы">
+          <div class="ledger__header">
+            <span>Сводка</span>
+            <span>На сегодня</span>
+          </div>
+          <div class="ledger__row">
+            <span class="ledger__label">Пользователи платформы</span>
+            <span class="ledger__value" id="stat-users">100</span>
+          </div>
+          <div class="ledger__row">
+            <span class="ledger__label">Активные объявления</span>
+            <span class="ledger__value" id="stat-ads">50</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="services">
+      <div class="services__col">
+        <h2>Размещение</h2>
+        <p>Опишите услугу или товар, добавьте условия — объявление появится в общем каталоге.</p>
+      </div>
+      <div class="services__divider" aria-hidden="true"></div>
+      <div class="services__col">
+        <h2>Поиск</h2>
+        <p>Просматривайте действующие объявления и обращайтесь к авторам напрямую.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Рекламная платформа · все объявления проходят через единый реестр</p>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script>
+    var dateEl = document.getElementById('doc-date');
+    if (dateEl) {
+      dateEl.textContent = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    // Если пользователь уже авторизован — ведём его в каталог, а не на регистрацию
+    var user = DB.getCurrentUser();
+    if (user) {
+      document.getElementById('cta-row').innerHTML =
+        '<a href="pages/feed.html" class="btn btn--primary">Перейти в каталог</a>' +
+        '<a href="pages/profile.html" class="btn btn--secondary">Мой профиль</a>';
+    }
+
+    // Реальное число объявлений в демо-БД (поверх базовых "100 пользователей")
+    DB.getAds().then(function (ads) {
+      document.getElementById('stat-ads').textContent = 50 + ads.length;
+    });
+  </script>
+
+</body>
+</html>

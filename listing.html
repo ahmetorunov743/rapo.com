@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Объявление — Рекламная платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a href="../index.html" class="masthead__mark">Рекламная платформа</a>
+      <nav class="nav-links">
+        <a href="feed.html">Каталог</a>
+        <a href="profile.html">Профиль</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="listing-detail" id="listing-root">
+    <a href="feed.html" class="listing-detail__back">← Назад к объявлениям</a>
+    <div id="listing-content"></div>
+  </main>
+
+  <script src="../assets/js/data.js"></script>
+  <script>
+    DB.requireAuth('login.html');
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    var id = new URLSearchParams(window.location.search).get('id');
+    var content = document.getElementById('listing-content');
+
+    if (!id) {
+      content.innerHTML = '<div class="empty-state"><h2>Объявление не указано</h2><p>Ссылка неполная — вернитесь в каталог и выберите объявление из списка.</p></div>';
+    } else {
+      DB.getAdById(id).then(function (ad) {
+        if (!ad) {
+          content.innerHTML = '<div class="empty-state"><h2>Объявление не найдено</h2><p>Возможно, оно было удалено автором.</p></div>';
+          return;
+        }
+        var currentUser = DB.getCurrentUser();
+        var isOwner = currentUser && currentUser.id === ad.userId;
+
+        content.innerHTML =
+          '<div class="listing-detail__card">' +
+            '<div class="listing-detail__header">' +
+              '<p class="eyebrow" style="margin-bottom:10px;">' + escapeHtml(ad.author || 'Автор скрыт') + '</p>' +
+              '<h1 style="font-size:1.8rem;margin:0;">' + escapeHtml(ad.title) + '</h1>' +
+              (ad.price ? '<p class="listing-detail__price">' + escapeHtml(ad.price) + '</p>' : '') +
+            '</div>' +
+            '<div class="listing-detail__body">' +
+              '<p>' + escapeHtml(ad.description) + '</p>' +
+              (isOwner ? '<button id="delete-btn" class="btn btn--danger">Удалить объявление</button>' : '') +
+            '</div>' +
+            (ad.contact ? '<div class="listing-detail__contact">Связаться: ' + escapeHtml(ad.contact) + '</div>' : '') +
+          '</div>';
+
+        var deleteBtn = document.getElementById('delete-btn');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', function () {
+            if (!confirm('Удалить это объявление? Действие необратимо.')) return;
+            DB.deleteAd(ad.id).then(function () {
+              window.location.href = 'profile.html';
+            }).catch(function (err) { alert(err.message); });
+          });
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

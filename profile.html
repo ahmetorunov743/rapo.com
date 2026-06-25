@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль — Рекламная платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a href="../index.html" class="masthead__mark">Рекламная платформа</a>
+      <nav class="nav-links">
+        <a href="feed.html">Каталог</a>
+        <a href="listing-new.html" class="nav-cta">+ Разместить объявление</a>
+        <button id="logout-btn" type="button">Выйти</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="profile-header container">
+      <p class="eyebrow">Личный кабинет</p>
+      <h1 id="profile-username" style="font-size:1.9rem;margin:0 0 6px;">—</h1>
+      <p class="lede" id="profile-email" style="margin-bottom:0;">—</p>
+    </div>
+
+    <div class="page-body container">
+      <h2 style="font-size:1.3rem;margin:0 0 18px;">Мои объявления</h2>
+      <div id="ad-grid" class="ad-grid"></div>
+      <div id="empty-state" class="empty-state" style="display:none;">
+        <h2>Вы пока ничего не разместили</h2>
+        <p>Опубликуйте первое объявление — оно появится здесь и в общем каталоге.</p>
+        <a href="listing-new.html" class="btn btn--primary" style="margin-top:16px;">Разместить объявление</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Рекламная платформа · все объявления проходят через единый реестр</p>
+  </footer>
+
+  <script src="../assets/js/data.js"></script>
+  <script>
+    var user = DB.requireAuth('login.html');
+    if (user) {
+      document.getElementById('profile-username').textContent = user.username;
+      document.getElementById('profile-email').textContent = user.email;
+
+      var grid = document.getElementById('ad-grid');
+      var emptyState = document.getElementById('empty-state');
+
+      function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+      }
+
+      function render(ads) {
+        grid.innerHTML = '';
+        emptyState.style.display = ads.length ? 'none' : 'block';
+        ads.forEach(function (ad) {
+          var card = document.createElement('div');
+          card.className = 'ad-card';
+          card.innerHTML =
+            '<h3 class="ad-card__title">' + escapeHtml(ad.title) + '</h3>' +
+            '<p class="ad-card__desc">' + escapeHtml((ad.description || '').slice(0, 110)) + '</p>' +
+            (ad.price ? '<span class="ad-card__price">' + escapeHtml(ad.price) + '</span>' : '') +
+            '<div class="ad-card__actions">' +
+              '<a href="listing.html?id=' + encodeURIComponent(ad.id) + '" class="btn btn--secondary btn--sm">Открыть</a>' +
+              '<button class="btn btn--danger" data-id="' + ad.id + '">Удалить</button>' +
+            '</div>';
+          grid.appendChild(card);
+        });
+
+        grid.querySelectorAll('button[data-id]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (!confirm('Удалить это объявление?')) return;
+            DB.deleteAd(btn.getAttribute('data-id')).then(load).catch(function (err) { alert(err.message); });
+          });
+        });
+      }
+
+      function load() { DB.getAdsByUser(user.id).then(render); }
+      load();
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      DB.logout();
+      window.location.href = '../index.html';
+    });
+  </script>
+
+</body>
+</html>

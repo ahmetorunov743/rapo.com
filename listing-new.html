@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Новое объявление — Рекламная платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a href="../index.html" class="masthead__mark">Рекламная платформа</a>
+      <nav class="nav-links">
+        <a href="feed.html">← Назад в каталог</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="form-shell">
+    <form class="form-card" id="ad-form" novalidate style="max-width:560px;">
+      <div class="form-card__header">
+        <p class="eyebrow">Анкета объявления</p>
+        <h1>Новое объявление</h1>
+      </div>
+
+      <div class="form-card__body">
+        <div id="form-alert"></div>
+
+        <div class="field" id="field-title">
+          <label for="title">Заголовок (товар / услуга)</label>
+          <input type="text" id="title" required>
+          <p class="error-text">Укажите заголовок.</p>
+        </div>
+
+        <div class="field" id="field-desc">
+          <label for="desc">Описание</label>
+          <textarea id="desc" required></textarea>
+          <p class="error-text">Добавьте описание.</p>
+        </div>
+
+        <div class="field">
+          <label for="price">Цена / бюджет</label>
+          <input type="text" id="price" placeholder="например, 5 000 ₽ или «по договорённости»">
+        </div>
+
+        <div class="field">
+          <label>Как с вами связаться?</label>
+          <div class="radio-row">
+            <label><input type="radio" name="contact-type" value="phone" checked> Телефон</label>
+            <label><input type="radio" name="contact-type" value="social"> Соцсеть / мессенджер</label>
+          </div>
+        </div>
+
+        <div class="field-row" id="contact-phone">
+          <div class="field" style="flex:0 0 150px;">
+            <label for="country">Страна</label>
+            <select id="country">
+              <option value="+7">Россия / Казахстан (+7)</option>
+              <option value="+380">Украина (+380)</option>
+              <option value="+375">Беларусь (+375)</option>
+              <option value="+993">Туркменистан (+993)</option>
+              <option value="+998">Узбекистан (+998)</option>
+              <option value="+996">Кыргызстан (+996)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="phone">Номер телефона</label>
+            <input type="tel" id="phone" placeholder="900 123 45 67">
+          </div>
+        </div>
+
+        <div class="field-row" id="contact-social" style="display:none;">
+          <div class="field" style="flex:0 0 150px;">
+            <label for="social-app">Приложение</label>
+            <select id="social-app">
+              <option value="Telegram">Telegram</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Imo">Imo</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="social-link">Ссылка или ID пользователя</label>
+            <input type="text" id="social-link" placeholder="@username">
+          </div>
+        </div>
+
+        <div class="field" id="field-photo">
+          <label for="photo">Фотография (необязательно)</label>
+          <input type="file" id="photo" accept="image/*">
+          <p class="helper-text">Превью сохранится локально в этом демо-режиме. После подключения backend'а файлы будут загружаться на сервер.</p>
+        </div>
+
+        <button type="submit" class="btn btn--primary" id="submit-btn" style="width:100%;">Опубликовать</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="../assets/js/data.js"></script>
+  <script>
+    DB.requireAuth('login.html');
+
+    var phoneBlock = document.getElementById('contact-phone');
+    var socialBlock = document.getElementById('contact-social');
+
+    document.querySelectorAll('input[name="contact-type"]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        var isPhone = this.value === 'phone';
+        phoneBlock.style.display = isPhone ? 'flex' : 'none';
+        socialBlock.style.display = isPhone ? 'none' : 'flex';
+      });
+    });
+
+    var form = document.getElementById('ad-form');
+    var alertBox = document.getElementById('form-alert');
+    var submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      alertBox.innerHTML = '';
+
+      var title = document.getElementById('title').value.trim();
+      var desc = document.getElementById('desc').value.trim();
+      var price = document.getElementById('price').value.trim();
+      var contactType = document.querySelector('input[name="contact-type"]:checked').value;
+
+      var valid = true;
+      document.getElementById('field-title').classList.toggle('has-error', !title); if (!title) valid = false;
+      document.getElementById('field-desc').classList.toggle('has-error', !desc); if (!desc) valid = false;
+      if (!valid) return;
+
+      var contact = contactType === 'phone'
+        ? document.getElementById('country').value + ' ' + document.getElementById('phone').value.trim()
+        : document.getElementById('social-app').value + ': ' + document.getElementById('social-link').value.trim();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Публикуем…';
+
+      DB.createAd({ title: title, description: desc, price: price, contact: contact })
+        .then(function () { window.location.href = 'profile.html'; })
+        .catch(function (err) {
+          alertBox.innerHTML = '<div class="alert alert--error">' + err.message + '</div>';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Опубликовать';
+        });
+    });
+  </script>
+
+</body>
+</html>
